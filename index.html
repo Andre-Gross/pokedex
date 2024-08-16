@@ -6,13 +6,20 @@
     <title>Pokedex</title>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/backgroundColours.css">
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <script src="script.js"></script>
 </head>
 <body onload="init()">
     
-    
     <div id="container"></div>
+
+    <div id="pokemonModal" class="modal" style="display:none;">
+        <div id="modal-container" class="modal-container d-flex justify-content-between">
+            <div id="pokemonDetails"></div>
+            <span id="closeModal" class="close">&times;</span>
+        </div>
+    </div>
     
 
 </body>

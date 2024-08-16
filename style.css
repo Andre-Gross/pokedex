@@ -13,8 +13,14 @@ body {
 
 .pokeCard {
     aspect-ratio: 1 / 1;
-    width: 200px;
-    padding: 4px
+    width: 208px;
+    color: white;
+}
+
+
+.pokeCard:hover {
+    box-shadow: 0px 0px 15px 3px #000000;
+    cursor: pointer;
 }
 
 
@@ -24,96 +30,40 @@ body {
 }
 
 
-.bc-normal {
-    background-color: #babba9;
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 
-.bc-fighting {
-    background-color: #bb5643;
+.modal-container {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    /* border: 1px solid #888; */
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
 }
 
 
-.bc-flying {
-    background-color: #96c9fe;
+.close {
+    color: #FFFFFF;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
 }
 
 
-.bc-poison {
-    background-color: #9553ce;
-}
-
-
-.bc- {
-    background-color: #a57439;
-}
-
-
-.bc-ground {
-    background-color: #a67439;
-}
-
-
-.bc-rock {
-    background-color: #a57439;
-}
-
-
-.bc-bug {
-    background-color: #93c12a;
-}
-
-
-.bc-ghost {
-    background-color: #6e4370;
-}
-
-
-.bc-steel {
-    background-color: #abaaba;
-}
-
-
-.bc-fire {
-    background-color: #ff421c;
-}
-
-
-.bc-water {
-    background-color: #2c9be3;
-}
-
-
-.bc-grass {
-    background-color: #62bc5b;
-}
-
-
-.bc-electric {
-    background-color: #fedc00;
-}
-
-
-.bc-psychic {
-    background-color: #ff6380;
-}
-
-
-.bc-ice {
-    background-color: #74cfc0;
-}
-
-
-.bc-dragon {
-    background-color: #5670bd;
-}
-
-
-.bc-dark {
-    background-color: #4e4644;
-}
-
-
-.bc-fairy {
-    background-color: #ec8fe7;
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
