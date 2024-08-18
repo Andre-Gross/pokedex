@@ -1,4 +1,4 @@
-let pokeID = 208;
+let pokeID = 133;
 let amountOfCards = 4;
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
 const FORM_URL = "-form"
@@ -37,13 +37,10 @@ async function loadSpecificData(id) {
 
 
 function upperCaseFirstLetter(word) {
-    // word = word[0].toUpperCase() + word.substring(1);
-    // return word;
-
-    return word
-        .split('-')  // Teilt den String bei jedem Bindestrich in ein Array von Wörtern auf
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1))  // Kapitalisiert den ersten Buchstaben jedes Wortes
-        .join('-');  // Fügt die Wörter wieder mit Bindestrichen zusammen
+return word
+        .split('-')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join('-'); 
 }
 
 
@@ -102,20 +99,84 @@ async function showModal(id) {
     addTypesHTML(types, `typesOfSpecific`)
     addStats(specificData);
 
-    document.getElementById("closeModal").onclick = () => {
-        closeModal(specificData);
+    await loadEvolutionChain(specificData, id);
+
+    document.getElementById("pokemonModal").onclick = (event) => {
+        if (event.target === document.getElementById("pokemonModal")) {
+            closeModal(specificData);
+        }
     };
 
+    // document.getElementById("closeModal").onclick = () => {
+    //     closeModal(specificData);
+    // };
+
     cry.play();
+}
+
+
+async function loadEvolutionChain(specificData, id) {
+    let speciesUrl = specificData.species.url;
+    let speciesData = await fetch(speciesUrl).then(res => res.json());
+    let evolutionChainUrl = speciesData.evolution_chain.url;
+    let evolutionChainData = await fetch(evolutionChainUrl).then(res => res.json());
+
+    console.log(evolutionChainData);
+
+    let chain = evolutionChainData.chain;
+    let evolutionsHTML = generateEvolutionsHTML(chain, id);
+    
+    document.getElementById("pokemonDetails").innerHTML += `
+        <div class="p-2 rounded mt-3">
+            <h4>Evolution Chain</h4>
+            <div id="evolutionChain">${evolutionsHTML}</div>
+        </div>
+    `;
+}
+
+function generateEvolutionsHTML(chain, currentId) {
+    let html = '';
+
+    function traverseChain(chainNode, isCurrent) {
+        let speciesName = upperCaseFirstLetter(chainNode.species.name);
+        let speciesId = extractIdFromUrl(chainNode.species.url);  // Diese Funktion extrahiert die Pokémon-ID
+        let spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${speciesId}.png`;
+        
+        // Hervorhebung für das aktuelle Pokémon
+        let highlightClass = isCurrent ? 'border border-primary rounded' : '';
+
+        html += `
+            <div class="d-flex align-items-center ${highlightClass}">
+                <img src="${spriteUrl}" alt="${speciesName}" class="w-25">
+                <p class="mb-0 mx-2">${speciesName}</p>
+            </div>
+        `;
+
+        // Falls es weitere Entwicklungen gibt
+        if (chainNode.evolves_to.length > 0) {
+            html += '<div class="d-flex flex-column align-items-center">';
+            chainNode.evolves_to.forEach(childChainNode => traverseChain(childChainNode, false));
+            html += '</div>';
+        }
+    }
+
+    traverseChain(chain, chain.species.name === currentId);
+
+    return html;
+}
+
+function extractIdFromUrl(url) {
+    return url.split('/').filter(Boolean).pop();  // Extrahiere die letzte ID aus der URL
 }
 
 
 function modalContentHTML(specificData, id) {
     let name = upperCaseFirstLetter(specificData.name);
     let sprite = specificData.sprites.other["official-artwork"].front_default;
+    let abilities = specificData.abilities.map(t => upperCaseFirstLetter(t.ability.name));
+    let types = specificData.types.map(t => upperCaseFirstLetter(t.type.name));
     let height = specificData.height / 10;  // Höhe in Metern
     let weight = specificData.weight / 10;  // Gewicht in Kilogramm
-    let types = specificData.types.map(t => upperCaseFirstLetter(t.type.name));
 
 
     let content = `
@@ -124,10 +185,11 @@ function modalContentHTML(specificData, id) {
             <div id="typesOfSpecific"></div> 
             <img class="w-50" src="${sprite}" alt="${name}">
         </div>
-        <div>
-            <p><strong>Type(s):</strong> ${types}</p>
-            <p><strong>Height:</strong> ${height} m</p>
-            <p><strong>Weight:</strong> ${weight} kg</p>
+        <div class="p-2 rounded text-dark bc-textBackground">
+            <p> <span class="fw-bold">Abilities:</span> ${abilities.join(", ")}</p>
+            <p> <span class="fw-bold">Type(s)</span>: ${types}</p>
+            <p> <span class="fw-bold">Height:</span> ${height} m</p>
+            <p> <span class="fw-bold">Weight:</span> ${weight} kg</p>
         </div>
         <div id="baseStats"></div>
     `;
@@ -156,7 +218,7 @@ function addStats(specificData){
         <div>
             <p>${upperCaseFirstLetter(name)}</p>
             <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: ${sValueInPercent}" aria-valuenow="${statValue}" aria-valuemin="0" aria-valuemax="255"></div>
+                <div class="progress-bar" role="progressbar" style="width: ${sValueInPercent}" aria-valuenow="${statValue}" aria-valuemin="0" aria-valuemax="255">${statValue}</div>
             </div>
         </div>
         `
@@ -168,7 +230,7 @@ function addStats(specificData){
         <div>
             <p>Summary</p>
             <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width: ${sValueInPercent}" aria-valuenow="${statValueSum}" aria-valuemin="0" aria-valuemax="255"></div>
+                <div class="progress-bar" role="progressbar" style="width: ${sValueInPercent}" aria-valuenow="${statValueSum}" aria-valuemin="0" aria-valuemax="255">${statValueSum}</div>
             </div>
         </div>
         `
