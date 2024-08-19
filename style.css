@@ -4,6 +4,9 @@ body {
 }
 
 
+
+
+
 #container {
     padding: 8px;
     display: flex;
@@ -32,7 +35,7 @@ body {
 }
 
 
-.modal {
+.pokemonModal {
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -51,6 +54,31 @@ body {
     max-width: 600px;
     border-radius: 10px;
     color: white;
+}
+
+
+#modalNav li {
+    border-top: solid 0.5px;
+    border-left: solid 0.5px;
+    border-right: solid 0.5px;
+    border-color: gray;
+}
+
+
+#modalNav li:hover {
+    cursor: pointer;
+}
+
+
+#modalNav li a {
+    color: #000000;
+}
+
+
+#modalContent {
+    border-bottom: solid 0.5px grey;
+    border-left: solid 0.5px grey;
+    border-right: solid 0.5px grey;
 }
 
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,19 +9,25 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styles/backgroundColours.css">
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+
     <script src="script.js"></script>
+    <script src="scripts/HTML.js"></script>
 </head>
+
 <body class="d-flex justify-content-center" onload="init()">
-    
+
     <div id="container"></div>
 
-    <div id="pokemonModal" class="modal" style="display:none;">
-        <div id="modal-container" class="modal-container d-flex justify-content-between">
-            <div id="pokemonDetails" class="w-100"></div>
+    <div id="pokemonModal" class="pokemonModal" style="display:none;">
+        <div id="modal-container" class="modal-container d-flex flex-column justify-content-between">
+            <div id="modalHead"></div>
+            <div id="modalNav" class="w-100 d-flex flex-column"></div>
+            <div id="modalContent" class="rounded-bottom p-2 w-100 text-dark bc-textBackground"></div>
             <!-- <span id="closeModal" class="close">&times;</span> -->
         </div>
     </div>
-    
+
 
 </body>
+
 </html>
