@@ -7,17 +7,19 @@ let chosenContent = "generalTab";
 
 
 async function init() {
+    showModal(pokeID);
+    
     let container = document.getElementById("container")
 
     container.innerHTML = "";
     await loadNextPokecards(amountOfCards);
 
-    showModal(pokeID);
 
 }
 
 
 async function loadNextPokecards(amount) {
+    let container = document.getElementById("container");
     for (let id = pokeID; id < pokeID + amount; id++) {
         let overviewData = await loadOverviewData(id);
         let types = overviewData.types.map(t => (t.type.name));
@@ -76,6 +78,10 @@ async function changeModalCard(currentId, newId) {
     specificData = await loadSpecificData(currentId);
     closeModal(specificData);
     showModal(newId);
+
+    if (newId > pokeID-1) {
+        loadNextPokecards(amountOfCards);
+    }
 }
 
 
