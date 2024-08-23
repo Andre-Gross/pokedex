@@ -7,8 +7,10 @@ async function overviewCardHTML(overviewData, id) {
             <p class="align-self-end">#${id}</p>
             <h3>${name}</h3>
             <div class="d-flex justify-content-between">
-                <div id=typesOf${id} class="d-flex flex-column" style="gap: 8px"></div> 
-                <img src="${sprite}" alt="${name}">
+                <div id=typesOf${id} class="d-flex flex-column" style="gap: 8px"></div>
+                <div class="d-flex justify-content-center align-items-center pokeCardImgContainer"> 
+                    <img src="${sprite}" alt="${name}">
+                </div>
             </div>
         </div>
     `
@@ -23,15 +25,16 @@ function addTypesHTML(types, elementID) {
 
     for (let i = 0; i < types.length; i++) {
         let type = upperCaseFirstLetter(types[i]);
-        element.innerHTML += `<div class="rounded-pill bc-${types[0]} text-dark p-1", style="filter: brightness(120%); box-shadow: 0px 0px 3px 0.2px #000000;">${type}</div>`
+        element.innerHTML += `<div class="d-flex justify-content-center rounded-pill bc-${types[0]} text-dark p-1", style="filter: brightness(120%); box-shadow: 0px 0px 3px 0.2px #000000;">${type}</div>`
     }
 }
 
 
 function modalHTML(specificData, id){
     modalHeadHTML(specificData, id)
-    modalNavHTML();
+    modalNavHTML(specificData, id);
     modalContentHTML(specificData);
+    modalPreviousNextButtonHTML(id);
 }
 
 
@@ -51,13 +54,13 @@ function modalHeadHTML(specificData, id){
 }
 
 
-function modalNavHTML() {
+function modalNavHTML(specificData, id) {
     document.getElementById("modalNav").innerHTML = `
     <ul class="nav">
-        <li id="generalTab" class="nav-item rounded-top flex-fill bc-textBackground">
+        <li id="generalTab" class="nav-item rounded-top flex-fill bc-textBackground" onclick="openTab('generalTab', ${id})">
             <a class="nav-link" href="#">General</a>
         </li>
-        <li id="statsTab" class="nav-item rounded-top flex-fill bc-textBackground">
+        <li id="statsTab" class="nav-item rounded-top flex-fill bc-textBackground" onclick="openTab('statsTab', ${id})">
             <a class="nav-link" href="#">Base Stats</a>
         </li>
     </ul>
@@ -114,7 +117,7 @@ function statsHTML(specificData){
 
         HTML += `
         <div>
-            <p>${upperCaseFirstLetter(name)}</p>
+            <p class="statsName">${upperCaseFirstLetter(name)}</p>
             <div class="progress">
                 <div class="progress-bar" role="progressbar" style="width: ${sValueInPercent}" aria-valuenow="${statValue}" aria-valuemin="0" aria-valuemax="255">${statValue}</div>
             </div>
@@ -126,7 +129,7 @@ function statsHTML(specificData){
     let sValueInPercent = calculatePercent(statValueSum, 720);
     HTML += `
         <div>
-            <p>Summary</p>
+            <p class="statsName">Summary</p>
             <div class="progress">
                 <div class="progress-bar" role="progressbar" style="width: ${sValueInPercent}" aria-valuenow="${statValueSum}" aria-valuemin="0" aria-valuemax="255">${statValueSum}</div>
             </div>
@@ -134,6 +137,16 @@ function statsHTML(specificData){
         `
 
     return HTML;
+}
+
+
+function modalPreviousNextButtonHTML(id){
+    container = document.getElementById("modalPrevoiusNextButton");
+    container.innerHTML = `
+    <button onclick="changeModalCard(${id}, ${id-1})">&#8656</button>
+    <button onclick="changeModalCard(${id}, ${id+1})">&#8658</button>
+    `;
+
 }
 
 

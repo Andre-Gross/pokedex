@@ -4,9 +4,6 @@ body {
 }
 
 
-
-
-
 #container {
     padding: 8px;
     display: flex;
@@ -17,8 +14,8 @@ body {
 
 
 .pokeCard {
-    aspect-ratio: 1 / 1;
-    width: 208px;
+    min-height: 240px;
+    min-width: 224px !important;
     color: white;
 }
 
@@ -29,9 +26,21 @@ body {
 }
 
 
+.pokeCardImgContainer {
+    min-width: 144px;
+    min-height: 144px;
+}
+
+
 .pokeCard img {
     width: 128px;
-    aspect-ratio: 1 / 1;
+    height: 128px;
+}
+
+
+.pokeCard:hover .pokeCardImgContainer img {
+    width: 144px;
+    height: 144px;
 }
 
 
@@ -79,6 +88,12 @@ body {
     border-bottom: solid 0.5px grey;
     border-left: solid 0.5px grey;
     border-right: solid 0.5px grey;
+}
+
+
+.statsName {
+    margin-top: 1rem !important;
+    margin-bottom: 0.2rem !important;
 }
 
 

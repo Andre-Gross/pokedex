@@ -14,15 +14,20 @@
     <script src="scripts/HTML.js"></script>
 </head>
 
-<body class="d-flex justify-content-center" onload="init()">
+<body onload="init()">
 
-    <div id="container"></div>
+    <div id="container" class="d-flex justify-content-center"></div>
+
+    <section class="d-flex justify-content-center">
+        <button class="btn btn-primary" onclick="loadNextPokecards(12)">Next</button>
+    </section>
 
     <div id="pokemonModal" class="pokemonModal" style="display:none;">
         <div id="modal-container" class="modal-container d-flex flex-column justify-content-between">
             <div id="modalHead"></div>
             <div id="modalNav" class="w-100 d-flex flex-column"></div>
             <div id="modalContent" class="rounded-bottom p-2 w-100 text-dark bc-textBackground"></div>
+            <div id="modalPrevoiusNextButton"></div>
             <!-- <span id="closeModal" class="close">&times;</span> -->
         </div>
     </div>
