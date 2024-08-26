@@ -23,7 +23,7 @@ async function init() {
 
 
 async function loadNextPokecards(amount) {
-    await loadNextPokecardsLoop(amount);
+    await loadPokecards(amount)
 
     currentPokeID = currentPokeID + amount;
     if (currentPokeID > highestPokeID) {
@@ -37,20 +37,31 @@ async function loadNextPokecards(amount) {
 }
 
 
-async function loadNextPokecardsLoop(amount) {
+async function loadPokecards(idsOrAmount, isSequential = true) {
     let container = document.getElementById("container");
 
-    for (let id = currentPokeID; id < currentPokeID + amount; id++) {
-        let overviewData = await loadOverviewData(id);
-        let types = overviewData.types.map(t => (t.type.name));
-        container.innerHTML += await overviewCardHTML(overviewData, id);
-        addTypesHTML(types, `typesOf${id}`);
-        addBackgroundColour(overviewData, `pokeCardNo${id}`);
-
-        if (id >= highestPokeID) {
-            break;
+    if (isSequential) {
+        for (let id = currentPokeID; id < currentPokeID + idsOrAmount; id++) {
+            await loadAndDisplayPokecard(id, container);
+            if (id >= highestPokeID) {
+                break;
+            }
+        }
+    } else {
+        for (let i = 0; i < idsOrAmount.length; i++) {
+            let id = idsOrAmount[i] + 1;
+            await loadAndDisplayPokecard(id, container);
         }
     }
+}
+
+
+async function loadAndDisplayPokecard(id, container) {
+    let overviewData = await loadOverviewData(id);
+    let types = overviewData.types.map(t => t.type.name);
+    container.innerHTML += await overviewCardHTML(overviewData, id);
+    addTypesHTML(types, `typesOf${id}`);
+    addBackgroundColour(overviewData, `pokeCardNo${id}`);
 }
 
 
@@ -186,7 +197,8 @@ async function searchPokemon() {
     }
 
     if (allMatchingIDs.length == 1) {
-        await loadPokecardsLoop(allMatchingIDs);
+        container.innerHTML = '';
+        await loadPokecards(allMatchingIDs, false);
         showModal(allMatchingIDs[0] + 1)
     } else if (input.value == '') {
         init();
@@ -195,7 +207,8 @@ async function searchPokemon() {
         container.style.color = "white";
         container.style.fontSize = "32px";
     } else {
-        await loadPokecardsLoop(allMatchingIDs);
+        container.innerHTML = '';
+        await loadPokecards(allMatchingIDs, false);
     }
 }
 
@@ -203,19 +216,4 @@ async function searchPokemon() {
 function checkNames(name) {
     let input = document.getElementById("searchInput").value.toLowerCase();
     return name.toLowerCase().includes(input);
-}
-
-
-async function loadPokecardsLoop(allMatchingIDs) {
-    let container = document.getElementById("container");
-    container.innerHTML = '';
-
-    for (let i = 0; i < allMatchingIDs.length; i++) {
-        let id = allMatchingIDs[i] + 1;
-        let overviewData = await loadOverviewData(id);
-        let types = overviewData.types.map(t => (t.type.name));
-        container.innerHTML += await overviewCardHTML(overviewData, id);
-        addTypesHTML(types, `typesOf${id}`);
-        addBackgroundColour(overviewData, `pokeCardNo${id}`);
-    }
 }
