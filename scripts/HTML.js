@@ -32,7 +32,7 @@ function addTypesHTML(types, elementID) {
 
 function modalHTML(specificData, id){
     modalHeadHTML(specificData, id)
-    modalNavHTML(specificData, id);
+    modalNavHTML(id);
     modalContentHTML(specificData);
     modalPreviousNextButtonHTML(id);
 }
@@ -54,14 +54,14 @@ function modalHeadHTML(specificData, id){
 }
 
 
-function modalNavHTML(specificData, id) {
+function modalNavHTML(id) {
     document.getElementById("modalNav").innerHTML = `
     <ul class="nav">
-        <li id="generalTab" class="nav-item rounded-top flex-fill bc-textBackground" onclick="openTab('generalTab', ${id})">
-            <a class="nav-link" href="#">General</a>
+        <li id="generalTab" class="rounded-top p-2 d-flex justify-content-center align-items-center flex-fill bc-textBackground" onclick="openTab('generalTab', ${id})">
+            <p class="m-0 fw-bold text-dark">General</p>
         </li>
-        <li id="statsTab" class="nav-item rounded-top flex-fill bc-textBackground" onclick="openTab('statsTab', ${id})">
-            <a class="nav-link" href="#">Base Stats</a>
+        <li id="statsTab" class="rounded-top d-flex justify-content-center align-items-center flex-fill bc-textBackground" onclick="openTab('statsTab', ${id})">
+            <p class="m-0 fw-bold text-dark">Base Stats</p>
         </li>
     </ul>
     `

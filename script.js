@@ -1,5 +1,6 @@
-let pokeID = 133;
-let amountOfCards = 12;
+let currentPokeID = 1024;
+let amountOfCards = 120;
+let highestPokeID = 1025;
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
 const FORM_URL = "-form"
 
@@ -7,11 +8,12 @@ let chosenContent = "generalTab";
 
 
 async function init() {
-    showModal(pokeID);
-    
+
+    // showModal(currentPokeID);
+
     let container = document.getElementById("container")
 
-    container.innerHTML = "";
+    container.innerHTML = ""; 
     await loadNextPokecards(amountOfCards);
 
 
@@ -20,14 +22,18 @@ async function init() {
 
 async function loadNextPokecards(amount) {
     let container = document.getElementById("container");
-    for (let id = pokeID; id < pokeID + amount; id++) {
+    for (let id = currentPokeID; id < currentPokeID + amount && id <= highestPokeID; id++) {
         let overviewData = await loadOverviewData(id);
         let types = overviewData.types.map(t => (t.type.name));
         container.innerHTML += await overviewCardHTML(overviewData, id);
         addTypesHTML(types, `typesOf${id}`);
         addBackgroundColour(overviewData, `pokeCardNo${id}`);
+        currentPokeID = id;
     }
-    pokeID = pokeID + amount;
+    if(currentPokeID >= highestPokeID) {
+        document.getElementById("nextButton").style.display = "none";
+
+    }
 }
 
 
@@ -36,7 +42,7 @@ async function showModal(id) {
     let types = specificData.types.map(t => (t.type.name));
     let cry = await new Audio(specificData.cries.latest);
 
-    chosenContent = "generalTab";
+    chosenContent = "statsTab";
 
     modalHTML(specificData, id);
     addTypesHTML(types, `typesOfSpecific`)
@@ -67,10 +73,10 @@ function generateNavBorderBot() {
 
 async function openTab(tab, id) {
     chosenContent = tab;
+
     let specificData = await loadSpecificData(id);
     modalNavHTML(specificData, id);
     modalContentHTML(specificData);
-
 }
 
 
@@ -79,7 +85,7 @@ async function changeModalCard(currentId, newId) {
     closeModal(specificData);
     showModal(newId);
 
-    if (newId > pokeID-1) {
+    if (newId > currentPokeID-1) {
         loadNextPokecards(amountOfCards);
     }
 }

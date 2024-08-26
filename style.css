@@ -1,11 +1,28 @@
 body {
     margin: 0;
-    max-width: 1920px;
+    background-color: #4A586E !important;
+}
+
+
+header {
+    background-color: #FF6F61;
+}
+
+
+p {
+    margin: 0;
+}
+
+
+header img {
+    max-height: 128px;
+    aspect-ratio: 1 / 1;
 }
 
 
 #container {
-    padding: 8px;
+    padding: 32px;
+    max-width: 1920px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
