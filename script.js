@@ -37,7 +37,7 @@ async function loadNextPokecards(amount) {
 }
 
 
-async function loadNextPokecardsLoop(amount){
+async function loadNextPokecardsLoop(amount) {
     let container = document.getElementById("container");
 
     for (let id = currentPokeID; id < currentPokeID + amount; id++) {
@@ -47,7 +47,7 @@ async function loadNextPokecardsLoop(amount){
         addTypesHTML(types, `typesOf${id}`);
         addBackgroundColour(overviewData, `pokeCardNo${id}`);
 
-        if(id >= highestPokeID) {
+        if (id >= highestPokeID) {
             break;
         }
     }
@@ -159,7 +159,7 @@ function calculatePercent(x, y) {
 }
 
 
-async function loadAllPokemonNames(){
+async function loadAllPokemonNames() {
     let response = await fetch(BASE_URL + LIST_URL_1 + "0" + LIST_URL_2 + highestPokeID + ".json");
     let responseAsJSON = await response.json();
 
@@ -170,13 +170,52 @@ async function loadAllPokemonNames(){
 }
 
 
-async function searchPokemon(){
+async function searchPokemon() {
+    let container = document.getElementById("container");
+    let input = document.getElementById("searchInput");
+    let allMatchingIDs = []
     let result = allPokemonNames.filter(checkNames);
-    console.log(result);
+
+    container.style = '';
+
+    for (let i = 0; i < result.length; i++) {
+        let name = result[i];
+
+        let index = allPokemonNames.indexOf(name);
+        allMatchingIDs.push(index)
+    }
+
+    if (allMatchingIDs.length == 1) {
+        await loadPokecardsLoop(allMatchingIDs);
+        showModal(allMatchingIDs[0] + 1)
+    } else if (input.value == '') {
+        init();
+    } else if (allMatchingIDs == 0) {
+        container.innerHTML = 'Es wurde kein passendes Pokemon gefunden.';
+        container.style.color = "white";
+        container.style.fontSize = "32px";
+    } else {
+        await loadPokecardsLoop(allMatchingIDs);
+    }
 }
 
 
-function checkNames(name){
+function checkNames(name) {
     let input = document.getElementById("searchInput").value.toLowerCase();
     return name.toLowerCase().includes(input);
+}
+
+
+async function loadPokecardsLoop(allMatchingIDs) {
+    let container = document.getElementById("container");
+    container.innerHTML = '';
+
+    for (let i = 0; i < allMatchingIDs.length; i++) {
+        let id = allMatchingIDs[i] + 1;
+        let overviewData = await loadOverviewData(id);
+        let types = overviewData.types.map(t => (t.type.name));
+        container.innerHTML += await overviewCardHTML(overviewData, id);
+        addTypesHTML(types, `typesOf${id}`);
+        addBackgroundColour(overviewData, `pokeCardNo${id}`);
+    }
 }
