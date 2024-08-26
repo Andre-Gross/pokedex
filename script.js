@@ -1,38 +1,55 @@
+let allPokemonNames = [];
 let currentPokeID = 1024;
-let amountOfCards = 120;
+let amountOfCards = 12;
 let highestPokeID = 1025;
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
-const FORM_URL = "-form"
+const LIST_URL_1 = "?offset=";
+const LIST_URL_2 = "&limit=";
+const FORM_URL = "-form";
 
 let chosenContent = "generalTab";
 
 
 async function init() {
+    await loadAllPokemonNames();
 
     // showModal(currentPokeID);
 
     let container = document.getElementById("container")
 
-    container.innerHTML = ""; 
+    container.innerHTML = "";
     await loadNextPokecards(amountOfCards);
-
-
 }
 
 
 async function loadNextPokecards(amount) {
+    await loadNextPokecardsLoop(amount);
+
+    currentPokeID = currentPokeID + amount;
+    if (currentPokeID > highestPokeID) {
+        currentPokeID = highestPokeID
+    }
+
+    if (currentPokeID >= highestPokeID) {
+        document.getElementById("nextButton").style.display = "none";
+
+    }
+}
+
+
+async function loadNextPokecardsLoop(amount){
     let container = document.getElementById("container");
-    for (let id = currentPokeID; id < currentPokeID + amount && id <= highestPokeID; id++) {
+
+    for (let id = currentPokeID; id < currentPokeID + amount; id++) {
         let overviewData = await loadOverviewData(id);
         let types = overviewData.types.map(t => (t.type.name));
         container.innerHTML += await overviewCardHTML(overviewData, id);
         addTypesHTML(types, `typesOf${id}`);
         addBackgroundColour(overviewData, `pokeCardNo${id}`);
-        currentPokeID = id;
-    }
-    if(currentPokeID >= highestPokeID) {
-        document.getElementById("nextButton").style.display = "none";
 
+        if(id >= highestPokeID) {
+            break;
+        }
     }
 }
 
@@ -85,7 +102,7 @@ async function changeModalCard(currentId, newId) {
     closeModal(specificData);
     showModal(newId);
 
-    if (newId > currentPokeID-1) {
+    if (newId > currentPokeID - 1) {
         loadNextPokecards(amountOfCards);
     }
 }
@@ -139,4 +156,27 @@ function removeBackgroundColour(overviewData, element) {
 function calculatePercent(x, y) {
     percent = ((x / y) * 100) + '%';
     return percent;
+}
+
+
+async function loadAllPokemonNames(){
+    let response = await fetch(BASE_URL + LIST_URL_1 + "0" + LIST_URL_2 + highestPokeID + ".json");
+    let responseAsJSON = await response.json();
+
+    for (let i = 0; i < responseAsJSON.results.length; i++) {
+        const name = responseAsJSON.results[i].name;
+        allPokemonNames.push(name);
+    }
+}
+
+
+async function searchPokemon(){
+    let result = allPokemonNames.filter(checkNames);
+    console.log(result);
+}
+
+
+function checkNames(name){
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    return name.toLowerCase().includes(input);
 }
