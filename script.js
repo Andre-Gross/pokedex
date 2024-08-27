@@ -1,6 +1,6 @@
 let allPokemonNames = [];
-let currentPokeID = 1024;
-let amountOfCards = 12;
+let currentPokeID = 1;
+let amountOfCards = 1;
 let highestPokeID = 1025;
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
 const LIST_URL_1 = "?offset=";
@@ -10,8 +10,10 @@ const FORM_URL = "-form";
 let chosenContent = "generalTab";
 
 
-async function init() {
+async function init(start = currentPokeID) {
     await loadAllPokemonNames();
+    currentPokeID = start;
+    document.getElementById("nextButton").style.display = "inline-block";
 
     // showModal(currentPokeID);
 
@@ -29,11 +31,6 @@ async function loadNextPokecards(amount) {
     if (currentPokeID > highestPokeID) {
         currentPokeID = highestPokeID
     }
-
-    if (currentPokeID >= highestPokeID) {
-        document.getElementById("nextButton").style.display = "none";
-
-    }
 }
 
 
@@ -44,6 +41,7 @@ async function loadPokecards(idsOrAmount, isSequential = true) {
         for (let id = currentPokeID; id < currentPokeID + idsOrAmount; id++) {
             await loadAndDisplayPokecard(id, container);
             if (id >= highestPokeID) {
+                document.getElementById("nextButton").style.display = "none";
                 break;
             }
         }
@@ -70,7 +68,7 @@ async function showModal(id) {
     let types = specificData.types.map(t => (t.type.name));
     let cry = await new Audio(specificData.cries.latest);
 
-    chosenContent = "statsTab";
+    chosenContent = "generalTab";
 
     modalHTML(specificData, id);
     addTypesHTML(types, `typesOfSpecific`)
@@ -103,7 +101,7 @@ async function openTab(tab, id) {
     chosenContent = tab;
 
     let specificData = await loadSpecificData(id);
-    modalNavHTML(specificData, id);
+    modalNavHTML(id);
     modalContentHTML(specificData);
 }
 
@@ -201,7 +199,7 @@ async function searchPokemon() {
         await loadPokecards(allMatchingIDs, false);
         showModal(allMatchingIDs[0] + 1)
     } else if (input.value == '') {
-        init();
+        init(1);
     } else if (allMatchingIDs == 0) {
         container.innerHTML = 'Es wurde kein passendes Pokemon gefunden.';
         container.style.color = "white";

@@ -13,9 +13,10 @@
 
     <script src="script.js"></script>
     <script src="scripts/HTML.js"></script>
+    <script src="scripts/templates.js"></script>
 </head>
 
-<body onload="init()">
+<body onload="includeHTML(); init()">
     
     <header class="d-flex px-4 justify-content-between align-items-center">
         <div class="d-flex align-items-center text-light">
@@ -23,24 +24,26 @@
             <h1>Pokedex</h1>
         </div>
         <form onsubmit="searchPokemon(); return false"><input id="searchInput" type="text"></form>
+        <img src="" alt="">
     </header>
 
     <section id="container" class="d-flex justify-content-center"></section>
 
     <section class="d-flex justify-content-center">
-        <button id="nextButton" class="mb-4 btn btn-light text-primary" onclick="loadNextPokecards(12)">Next</button>
+        <button id="nextButton" class="mb-4 bc-button btn text-light" onclick="loadNextPokecards(12)">Next</button>
     </section>
 
     <section id="pokemonModal" class="pokemonModal" style="display:none;">
         <div id="modal-container" class="modal-container d-flex flex-column justify-content-between">
             <div id="modalHead"></div>
             <div id="modalNav" class="w-100 d-flex flex-column"></div>
-            <div id="modalContent" class="rounded-bottom p-2 w-100 text-dark bc-textBackground"></div>
+            <div id="modalContent" class="rounded-bottom p-2 w-100 text-dark bc-text"></div>
             <div id="modalPrevoiusNextButton" class="mt-4 px-5 d-flex justify-content-between"></div>
             <!-- <span id="closeModal" class="close">&times;</span> -->
         </div>
     </section>
 
+    <div w3-include-html="templates/footer.html"></div>
 
 </body>
 

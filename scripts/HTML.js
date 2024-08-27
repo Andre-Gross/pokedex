@@ -57,10 +57,10 @@ function modalHeadHTML(specificData, id){
 function modalNavHTML(id) {
     document.getElementById("modalNav").innerHTML = `
     <ul class="nav">
-        <li id="generalTab" class="rounded-top p-2 d-flex justify-content-center align-items-center flex-fill bc-textBackground" onclick="openTab('generalTab', ${id})">
+        <li id="generalTab" class="rounded-top p-2 d-flex justify-content-center align-items-center flex-fill bc-text" onclick="openTab('generalTab', ${id})">
             <p class="m-0 fw-bold text-dark">General</p>
         </li>
-        <li id="statsTab" class="rounded-top d-flex justify-content-center align-items-center flex-fill bc-textBackground" onclick="openTab('statsTab', ${id})">
+        <li id="statsTab" class="rounded-top d-flex justify-content-center align-items-center flex-fill bc-text" onclick="openTab('statsTab', ${id})">
             <p class="m-0 fw-bold text-dark">Base Stats</p>
         </li>
     </ul>
@@ -89,7 +89,7 @@ function generalContentHTML(specificData){
 
 
     let content = `
-        <div class="p-2 rounded-bottom text-dark bc-textBackground">
+        <div class="p-2 rounded-bottom text-dark bc-text">
             <p> <span class="fw-bold">Abilities:</span> ${abilities.join(", ")}</p>
             <p> <span class="fw-bold">Type(s)</span>: ${types}</p>
             <p> <span class="fw-bold">Height:</span> ${height} m</p>
@@ -143,8 +143,8 @@ function statsHTML(specificData){
 function modalPreviousNextButtonHTML(id){
     container = document.getElementById("modalPrevoiusNextButton");
     container.innerHTML = `
-    <button class="rounded-circle btn btn-light" onclick="changeModalCard(${id}, ${id-1})">&#8656</button>
-    <button class="rounded-circle btn btn-light" onclick="changeModalCard(${id}, ${id+1})">&#8658</button>
+    <button class="rounded-circle btn bc-text" onclick="changeModalCard(${id}, ${id-1})">&#8656</button>
+    <button class="rounded-circle btn bc-text" onclick="changeModalCard(${id}, ${id+1})">&#8658</button>
     `;
 
 }

@@ -1,5 +1,10 @@
-.bc-textBackground {
-    background-color: #efe7db;
+.bc-text {
+    background-color: #efe7db !important;
+}
+
+
+.bc-button {
+    background-color: #ff6f61 !important;
 }
 
 

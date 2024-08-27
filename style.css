@@ -1,6 +1,39 @@
 body {
     margin: 0;
+    min-height: 100vh;
     background-color: #4A586E !important;
+
+    display: flex;
+    flex-direction: column;
+
+    --sb-track-color: #4a586e;
+    --sb-thumb-color: #ff6f61;
+    --sb-size: 14px;
+}
+
+
+body::-webkit-scrollbar {
+    width: var(--sb-size);
+}
+
+
+body::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 3px;
+}
+
+
+body::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 3px;
+    border: 1px solid #000000;
+}
+
+
+@supports not selector(::-webkit-scrollbar) {
+    body {
+        scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+    }
 }
 
 
@@ -23,6 +56,7 @@ header img {
 #container {
     padding: 32px;
     max-width: 1920px;
+    flex: 1;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -31,7 +65,7 @@ header img {
 
 
 .pokeCard {
-    min-height: 240px;
+    height: 240px;
     min-width: 224px !important;
     color: white;
 }
@@ -126,5 +160,35 @@ header img {
 .close:focus {
     color: black;
     text-decoration: none;
+    cursor: pointer;
+}
+
+
+#credits a {
+    color: white;
+    text-decoration: none;
+}
+
+
+#credits a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+
+footer {
+    background-color: #2C333E;
+}
+
+
+footer a {
+    margin-left: 16px;
+    text-decoration: none;
+    color: white;
+}
+
+
+footer a:hover {
+    text-decoration: underline;
     cursor: pointer;
 }

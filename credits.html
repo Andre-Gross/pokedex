@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credits</title>
+
+    <link rel="icon" type="image/vnd.icon"
+        href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/backgroundColours.css">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+
+    <script src="script.js"></script>
+    <script src="scripts/HTML.js"></script>
+    <script src="scripts/templates.js"></script>
+</head>
+
+<body onload="includeHTML()">
+
+    <header class="d-flex px-4 justify-content-between align-items-center">
+        <div class="d-flex align-items-center text-light">
+            <img src="img/pokeball.png" alt="">
+            <h1>Pokedex</h1>
+        </div>
+    </header>
+
+
+    <section id="credits" class="m-4 d-flex flex-column align-items-center justify-content-center" style="flex: 1;">
+        <div>
+            <img class="mx-4" src="img/volume.png" alt="">
+            <a href="https://www.flaticon.com/free-icons/speaker" title="speaker icons">Speaker icons created by Pixel
+                perfect - Flaticon</a>
+        </div>
+        <div class="mt-4">
+            <img class="mx-4" src="img/mute.png" alt="">
+            <a href="https://www.flaticon.com/free-icons/mute" title="mute icons">Mute icons created by Pixel perfect -
+                Flaticon</a>
+        </div>
+    </section>
+
+
+    <div w3-include-html="templates/footer.html"></div>
+</body>
+
+</html>
