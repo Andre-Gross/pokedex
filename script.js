@@ -9,6 +9,7 @@ let volumeOn = false;
 let searchMode = false;
 
 let saveID = 1;
+let arrayStart = 0;
 
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
 const LIST_URL_1 = "?offset=";
@@ -36,18 +37,20 @@ async function init(start = currentPokeID) {
 async function loadNextPokecards(amount) {
     await loadPokecards(amount)
 
-    currentPokeID = currentPokeID + amount;
-    if (currentPokeID > highestPokeID) {
-        currentPokeID = highestPokeID
+    if (searchMode == false) {
+        currentPokeID = currentPokeID + amount;
+        if (currentPokeID > highestPokeID) {
+            currentPokeID = highestPokeID
+        }
     }
 }
 
 
-async function loadPokecards(idsOrAmount) {
+async function loadPokecards(amount = 20) {
     let container = document.getElementById("container");
 
     if (searchMode == false) {
-        for (let id = currentPokeID; id < currentPokeID + idsOrAmount; id++) {
+        for (let id = currentPokeID; id < currentPokeID + amount; id++) {
             await loadAndDisplayPokecard(id, container);
             if (id >= highestPokeID) {
                 document.getElementById("nextButton").style.display = "none";
@@ -55,10 +58,16 @@ async function loadPokecards(idsOrAmount) {
             }
         }
     } else {
-        for (let i = 0; i < idsOrAmount.length; i++) {
-            let id = idsOrAmount[i] + 1;
+        for (let i = arrayStart; i < allMatchingIDs.length && i < arrayStart + amount; i++) {
+            let id = allMatchingIDs[i] + 1;
             await loadAndDisplayPokecard(id, container);
+            if (i >= allMatchingIDs.length - 1) {
+                document.getElementById("nextButton").style.display = "none";
+                break;
+            }
+            console.log(`${i}<${allMatchingIDs.length}`);
         }
+        arrayStart = arrayStart + amount;
     }
 }
 
@@ -124,8 +133,8 @@ async function changeModalCard(ID, upOrDown) {
     let newId;
 
     if (searchMode) {
-        let index = allMatchingIDs.indexOf(ID-1);
-        newId = allMatchingIDs[index + upOrDown]+1;
+        let index = allMatchingIDs.indexOf(ID - 1);
+        newId = allMatchingIDs[index + upOrDown] + 1;
     } else {
         newId = ID + upOrDown;
     }
@@ -202,8 +211,11 @@ async function loadAllPokemonNames() {
 async function searchPokemon() {
     let container = document.getElementById("container");
     let input = document.getElementById("searchInput");
-    allMatchingIDs = [];
     let result = allPokemonNames.filter(checkNames);
+    allMatchingIDs = [];
+    arrayStart = 0;
+    
+    document.getElementById("nextButton").style.display = "inline-block";
 
     container.style = '';
 
@@ -220,16 +232,17 @@ async function searchPokemon() {
         searchMode = true;
         showModal(allMatchingIDs[0] + 1)
     } else if (input.value == '') {
+        currentPokeID = 1;
         init(1);
         searchMode = false;
-    } else if (allMatchingIDs == 0) {
+    } else if (allMatchingIDs.length == 0) {
         container.innerHTML = 'Es wurde kein passendes Pokemon gefunden.';
         container.style.color = "white";
         container.style.fontSize = "32px";
     } else {
         container.innerHTML = '';
-        await loadPokecards(allMatchingIDs);
         searchMode = true;
+        await loadPokecards();
     }
 }
 
