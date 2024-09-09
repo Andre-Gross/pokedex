@@ -37,8 +37,25 @@ body::-webkit-scrollbar-thumb {
 }
 
 
+.mw-25vw {
+    max-width: 25vw;
+}
+
+
 header {
     background-color: #FF6F61;
+}
+
+header a {
+    text-decoration: none;
+    color: white;
+}
+
+
+.volumeImg {
+    max-height: 5vh !important;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
 }
 
 
@@ -191,4 +208,22 @@ footer a {
 footer a:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+
+@media(max-width: 590px) {
+    h1 {
+        display: none;
+    }
+}
+
+
+@media(max-width: 390px) {
+    header {
+        min-height: 96px;
+    }
+
+    header a img {
+        display: none;
+    }
 }

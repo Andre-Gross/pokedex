@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokedex</title>
-    <link rel="icon" type="image/vnd.icon" href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
+    <link rel="icon" type="image/vnd.icon"
+        href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styles/backgroundColours.css">
@@ -17,14 +18,19 @@
 </head>
 
 <body onload="includeHTML(); init()">
-    
-    <header class="d-flex px-4 justify-content-between align-items-center">
+
+    <header class="px-4 d-flex justify-content-between align-items-center flex-wrap">
         <div class="d-flex align-items-center text-light">
-            <img src="img/pokeball.png" alt="">
-            <h1>Pokedex</h1>
+            <a href="index.html" class="d-flex align-items-center">
+                <img class="mw-25vw" src="img/pokeball.png" alt="">
+                <h1>Pokedex</h1>
+            </a>
         </div>
         <form onsubmit="searchPokemon(); return false"><input id="searchInput" type="text"></form>
-        <img src="" alt="">
+        <div>
+        <img src="img/volume.png" alt="" id="volumeOnImg" class="volumeImg" onclick="changeVolume()">
+            <img src="img/mute.png" alt="" id="volumeOffImg" class="volumeImg" onclick="changeVolume()" style="display: none;">
+        </div>
     </header>
 
     <section id="container" class="d-flex justify-content-center"></section>

@@ -143,8 +143,8 @@ function statsHTML(specificData){
 function modalPreviousNextButtonHTML(id){
     container = document.getElementById("modalPrevoiusNextButton");
     container.innerHTML = `
-    <button class="rounded-circle btn bc-text" onclick="changeModalCard(${id}, ${id-1})">&#8656</button>
-    <button class="rounded-circle btn bc-text" onclick="changeModalCard(${id}, ${id+1})">&#8658</button>
+    <button class="rounded-circle btn bc-text" onclick="changeModalCard(${id}, -1)">&#8656</button>
+    <button class="rounded-circle btn bc-text" onclick="changeModalCard(${id}, 1)">&#8658</button>
     `;
 
 }
