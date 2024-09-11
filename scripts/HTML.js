@@ -30,7 +30,7 @@ function addTypesHTML(types, elementID) {
 }
 
 
-function modalHTML(specificData, id){
+function modalHTML(specificData, id) {
     modalHeadHTML(specificData, id)
     modalNavHTML(id);
     modalContentHTML(specificData);
@@ -38,7 +38,7 @@ function modalHTML(specificData, id){
 }
 
 
-function modalHeadHTML(specificData, id){
+function modalHeadHTML(specificData, id) {
     let name = upperCaseFirstLetter(specificData.name);
     let sprite = specificData.sprites.other["official-artwork"].front_default;
 
@@ -71,17 +71,17 @@ function modalNavHTML(id) {
 
 
 function modalContentHTML(specificData) {
-    let modalContent= document.getElementById("modalContent");
+    let modalContent = document.getElementById("modalContent");
 
-    if (chosenContent == "generalTab"){
+    if (chosenContent == "generalTab") {
         modalContent.innerHTML = generalContentHTML(specificData);
-    } else if (chosenContent == "statsTab"){
+    } else if (chosenContent == "statsTab") {
         modalContent.innerHTML = statsHTML(specificData);
     }
 }
 
 
-function generalContentHTML(specificData){
+function generalContentHTML(specificData) {
     let abilities = specificData.abilities.map(t => upperCaseFirstLetter(t.ability.name));
     let types = specificData.types.map(t => upperCaseFirstLetter(t.type.name));
     let height = specificData.height / 10;  // Höhe in Metern
@@ -101,7 +101,7 @@ function generalContentHTML(specificData){
 }
 
 
-function statsHTML(specificData){
+function statsHTML(specificData) {
     stats = specificData.stats;
     let statValueSum = 0;
 
@@ -140,13 +140,28 @@ function statsHTML(specificData){
 }
 
 
-function modalPreviousNextButtonHTML(id){
+function modalPreviousNextButtonHTML(id) {
     container = document.getElementById("modalPrevoiusNextButton");
     container.innerHTML = `
     <button class="rounded-circle btn bc-text" onclick="changeModalCard(${id}, -1)">&#8656</button>
     <button class="rounded-circle btn bc-text" onclick="changeModalCard(${id}, 1)">&#8658</button>
     `;
 
+}
+
+
+function loadingSpinnerHTML() {
+    HTML = `
+        <div class="spinner-container">
+            <svg class="pokeball-spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+                <circle cx="50" cy="50" r="45" fill="red" />
+                <path d="M 5,50 A 45,45 0 0 0 95,50 Z" fill="white" />
+                <circle cx="50" cy="50" r="38" fill="none" stroke="black" stroke-width="5" />
+                <circle cx="50" cy="50" r="15" fill="white" stroke="black" stroke-width="5" />
+                <circle cx="50" cy="50" r="7" fill="black" />
+            </svg>
+        </div>`;
+    return HTML;
 }
 
 

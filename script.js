@@ -2,13 +2,12 @@ let allPokemonNames = [];
 let allMatchingIDs = [];
 
 let currentPokeID = 1;
-let amountOfCards = 12;
+let amountOfCards = 6;
 let highestPokeID = 1025;
 
 let volumeOn = false;
 let searchMode = false;
 
-let saveID = 1;
 let arrayStart = 0;
 
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
@@ -18,64 +17,77 @@ const FORM_URL = "-form";
 
 let chosenContent = "generalTab";
 
+let saveHTML = ``;
+
 loadAllPokemonNames();
 
 
 async function init(start = currentPokeID) {
     currentPokeID = start;
+    let container = document.getElementById("container");
+    container.innerHTML = '';
     document.getElementById("nextButton").style.display = "inline-block";
 
-    // showModal(currentPokeID);
 
-    let container = document.getElementById("container")
-
-    container.innerHTML = "";
+    container.style.display = "none";
+    container.style.flex = "none";
     await loadNextPokecards(amountOfCards);
+    container.style.flex = "1";
+    container.style.display = "flex";
 }
 
 
 async function loadNextPokecards(amount) {
-    await loadPokecards(amount)
+    let nextButton = document.getElementById("nextButton");
 
-    if (searchMode == false) {
-        currentPokeID = currentPokeID + amount;
-        if (currentPokeID > highestPokeID) {
-            currentPokeID = highestPokeID
-        }
-    }
+
+    nextButton.style.display = "none";
+    showSpinner();
+    await loadPokecards(amount)
+    container.innerHTML += invisible.innerHTML;
+    invisible.innerHTML = '';
+    hideSpinner();
 }
 
 
-async function loadPokecards(amount = 20) {
-    let container = document.getElementById("container");
-
+async function loadPokecards(amount = amountOfCards) {
     if (searchMode == false) {
         for (let id = currentPokeID; id < currentPokeID + amount; id++) {
-            await loadAndDisplayPokecard(id, container);
+            await loadAndDisplayPokecard(id);
             if (id >= highestPokeID) {
                 document.getElementById("nextButton").style.display = "none";
                 break;
             }
         }
+        currentPokeID = currentPokeID + amount;
+        if (currentPokeID > highestPokeID) {
+            currentPokeID = highestPokeID
+        } else {
+            nextButton.style.display = "inline-block";
+        }
     } else {
         for (let i = arrayStart; i < allMatchingIDs.length && i < arrayStart + amount; i++) {
             let id = allMatchingIDs[i] + 1;
-            await loadAndDisplayPokecard(id, container);
+            await loadAndDisplayPokecard(id);
             if (i >= allMatchingIDs.length - 1) {
                 document.getElementById("nextButton").style.display = "none";
                 break;
             }
-            console.log(`${i}<${allMatchingIDs.length}`);
         }
         arrayStart = arrayStart + amount;
+        if (arrayStart < allMatchingIDs) {
+            nextButton.style.display = "inline-block";
+        }
     }
 }
 
 
-async function loadAndDisplayPokecard(id, container) {
+async function loadAndDisplayPokecard(id) {
+    let invisible = document.getElementById('invisible');
+
     let overviewData = await loadOverviewData(id);
     let types = overviewData.types.map(t => t.type.name);
-    container.innerHTML += await overviewCardHTML(overviewData, id);
+    invisible.innerHTML += await overviewCardHTML(overviewData, id);
     addTypesHTML(types, `typesOf${id}`);
     addBackgroundColour(overviewData, `pokeCardNo${id}`);
 }
@@ -86,7 +98,6 @@ async function showModal(id) {
     let types = specificData.types.map(t => (t.type.name));
     let cry = await new Audio(specificData.cries.latest);
 
-    saveID = id;
     chosenContent = "generalTab";
 
     modalHTML(specificData, id);
@@ -214,10 +225,12 @@ async function searchPokemon() {
     let result = allPokemonNames.filter(checkNames);
     allMatchingIDs = [];
     arrayStart = 0;
-    
+
+    container.innerHTML = '';
     document.getElementById("nextButton").style.display = "inline-block";
 
     container.style = '';
+    container.style.flex = '1';
 
     for (let i = 0; i < result.length; i++) {
         let name = result[i];
@@ -227,7 +240,6 @@ async function searchPokemon() {
     }
 
     if (allMatchingIDs.length == 1) {
-        container.innerHTML = '';
         await loadPokecards(allMatchingIDs);
         searchMode = true;
         showModal(allMatchingIDs[0] + 1)
@@ -240,9 +252,8 @@ async function searchPokemon() {
         container.style.color = "white";
         container.style.fontSize = "32px";
     } else {
-        container.innerHTML = '';
         searchMode = true;
-        await loadPokecards();
+        await loadNextPokecards();
     }
 }
 
@@ -263,4 +274,13 @@ function changeVolume() {
         document.getElementById('volumeOnImg').style.display = "block";
         document.getElementById("volumeOffImg").style.display = "none";
     }
+}
+
+
+function showSpinner() {
+    document.querySelector('.spinner-container').style.display = 'flex';
+}
+
+function hideSpinner() {
+    document.querySelector('.spinner-container').style.display = 'none';
 }

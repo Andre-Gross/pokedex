@@ -33,7 +33,11 @@
         </div>
     </header>
 
-    <section id="container" class="d-flex justify-content-center"></section>
+    <section id="container" class="justify-content-center"></section>
+
+    <section class="spinner-container">
+        <img id="spinner" class="mw-25vw" src="img/pokeball.png" alt="">
+    </section>
 
     <section class="d-flex justify-content-center">
         <button id="nextButton" class="mb-4 bc-button btn text-light" onclick="loadNextPokecards(12)">Next</button>
@@ -45,11 +49,13 @@
             <div id="modalNav" class="w-100 d-flex flex-column"></div>
             <div id="modalContent" class="rounded-bottom p-2 w-100 text-dark bc-text"></div>
             <div id="modalPrevoiusNextButton" class="mt-4 px-5 d-flex justify-content-between"></div>
-            <!-- <span id="closeModal" class="close">&times;</span> -->
         </div>
     </section>
 
     <div w3-include-html="templates/footer.html"></div>
+
+
+    <section id="invisible" class="d-none"></section>
 
 </body>
 
