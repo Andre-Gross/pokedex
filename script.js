@@ -39,7 +39,7 @@ async function init(start = currentPokeID) {
 
 async function loadNextPokecards(amount) {
     let nextButton = document.getElementById("nextButton");
-
+    let container = document.getElementById("container");
 
     nextButton.style.display = "none";
     showSpinner();
@@ -51,7 +51,7 @@ async function loadNextPokecards(amount) {
 
 
 async function loadPokecards(amount = amountOfCards) {
-    if (searchMode == false) {
+    if (!searchMode) {
         for (let id = currentPokeID; id < currentPokeID + amount; id++) {
             await loadAndDisplayPokecard(id);
             if (id >= highestPokeID) {
@@ -59,12 +59,8 @@ async function loadPokecards(amount = amountOfCards) {
                 break;
             }
         }
-        currentPokeID = currentPokeID + amount;
-        if (currentPokeID > highestPokeID) {
-            currentPokeID = highestPokeID
-        } else {
-            nextButton.style.display = "inline-block";
-        }
+        currentPokeID = Math.min(currentPokeID + amount, highestPokeID);
+        toggleNextButton(currentPokeID < highestPokeID);
     } else {
         for (let i = arrayStart; i < allMatchingIDs.length && i < arrayStart + amount; i++) {
             let id = allMatchingIDs[i] + 1;
@@ -75,7 +71,7 @@ async function loadPokecards(amount = amountOfCards) {
             }
         }
         arrayStart = arrayStart + amount;
-        if (arrayStart < allMatchingIDs) {
+        if (arrayStart < allMatchingIDs.length) {
             nextButton.style.display = "inline-block";
         }
     }
@@ -231,6 +227,7 @@ async function searchPokemon() {
 
     container.style = '';
     container.style.flex = '1';
+    container.style.display = 'flex';
 
     for (let i = 0; i < result.length; i++) {
         let name = result[i];
@@ -239,14 +236,14 @@ async function searchPokemon() {
         allMatchingIDs.push(index)
     }
 
-    if (allMatchingIDs.length == 1) {
-        await loadPokecards(allMatchingIDs);
-        searchMode = true;
-        showModal(allMatchingIDs[0] + 1)
-    } else if (input.value == '') {
+    if (input.value == '') {
         currentPokeID = 1;
         init(1);
         searchMode = false;
+    } else if (allMatchingIDs.length == 1) {
+        searchMode = true;
+        await loadNextPokecards(1);
+        showModal(allMatchingIDs[0] + 1)
     } else if (allMatchingIDs.length == 0) {
         container.innerHTML = 'Es wurde kein passendes Pokemon gefunden.';
         container.style.color = "white";
@@ -281,6 +278,12 @@ function showSpinner() {
     document.querySelector('.spinner-container').style.display = 'flex';
 }
 
+
 function hideSpinner() {
     document.querySelector('.spinner-container').style.display = 'none';
+}
+
+
+function toggleNextButton(shouldShow) {
+    document.getElementById("nextButton").style.display = shouldShow ? "inline-block" : "none";
 }
