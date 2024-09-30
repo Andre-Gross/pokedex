@@ -2,11 +2,12 @@ let allPokemonNames = [];
 let allMatchingIDs = [];
 
 let currentPokeID = 1;
-let amountOfCards = 6;
+let amountOfCards = 24;
 let highestPokeID = 1025;
 
-let volumeOn = false;
+let volumeOn = true;
 let searchMode = false;
+let showNextButton = true
 
 let arrayStart = 0;
 
@@ -17,36 +18,30 @@ const FORM_URL = "-form";
 
 let chosenContent = "generalTab";
 
-let saveHTML = ``;
-
 loadAllPokemonNames();
 
 
 async function init(start = currentPokeID) {
     currentPokeID = start;
-    let container = document.getElementById("container");
-    container.innerHTML = '';
-    document.getElementById("nextButton").style.display = "inline-block";
+    document.getElementById("container").innerHTML = '';
 
-
-    container.style.display = "none";
-    container.style.flex = "none";
+    hideContainerAndNextButton();
     await loadNextPokecards(amountOfCards);
-    container.style.flex = "1";
-    container.style.display = "flex";
+    showContainerAndNextButton()
 }
 
 
 async function loadNextPokecards(amount) {
-    let nextButton = document.getElementById("nextButton");
     let container = document.getElementById("container");
 
-    nextButton.style.display = "none";
+    toggleNextButton(false);
+    container.style.flex = '0'
     showSpinner();
     await loadPokecards(amount)
-    container.innerHTML += invisible.innerHTML;
-    invisible.innerHTML = '';
+    moveInvisibleToContainer();
     hideSpinner();
+    toggleNextButton();
+    container.style.flex = '1'
 }
 
 
@@ -66,13 +61,14 @@ async function loadPokecards(amount = amountOfCards) {
             let id = allMatchingIDs[i] + 1;
             await loadAndDisplayPokecard(id);
             if (i >= allMatchingIDs.length - 1) {
-                document.getElementById("nextButton").style.display = "none";
                 break;
             }
         }
         arrayStart = arrayStart + amount;
         if (arrayStart < allMatchingIDs.length) {
-            nextButton.style.display = "inline-block";
+            showNextButton = true;
+        } else {
+            showNextButton = false;
         }
     }
 }
@@ -83,9 +79,19 @@ async function loadAndDisplayPokecard(id) {
 
     let overviewData = await loadOverviewData(id);
     let types = overviewData.types.map(t => t.type.name);
+
     invisible.innerHTML += await overviewCardHTML(overviewData, id);
     addTypesHTML(types, `typesOf${id}`);
     addBackgroundColour(overviewData, `pokeCardNo${id}`);
+}
+
+
+function moveInvisibleToContainer() {
+    let container = document.getElementById("container");
+    let invisible = document.getElementById("invisible");
+
+    container.innerHTML += invisible.innerHTML;
+    invisible.innerHTML = '';
 }
 
 
@@ -111,7 +117,7 @@ async function showModal(id) {
 }
 
 
-function generateNavBorderBot() {
+function generateNavBorder() {
     switch (chosenContent) {
         case 'generalTab':
             document.getElementById("generalTab").style.borderBottom = "unset";
@@ -135,21 +141,28 @@ async function openTab(tab, id) {
 
 
 async function changeModalCard(ID, upOrDown) {
+    let newId;
+
     specificData = await loadSpecificData(ID);
     closeModal(specificData);
-    let newId;
 
     if (searchMode) {
         let index = allMatchingIDs.indexOf(ID - 1);
         newId = allMatchingIDs[index + upOrDown] + 1;
+        console.log(`${index}`);
+
+        if (index + 2 > arrayStart) {
+            loadNextPokecards(amountOfCards);
+        }
+
     } else {
         newId = ID + upOrDown;
+
+        if (newId > currentPokeID - 1) {
+            loadNextPokecards(amountOfCards);
+        }
     }
     showModal(newId);
-
-    if (newId > currentPokeID - 1) {
-        loadNextPokecards(amountOfCards);
-    }
 }
 
 
@@ -216,18 +229,29 @@ async function loadAllPokemonNames() {
 
 
 async function searchPokemon() {
-    let container = document.getElementById("container");
     let input = document.getElementById("searchInput");
-    let result = allPokemonNames.filter(checkNames);
     allMatchingIDs = [];
     arrayStart = 0;
 
-    container.innerHTML = '';
-    document.getElementById("nextButton").style.display = "inline-block";
+    document.getElementById("container").innerHTML = '';
 
-    container.style = '';
-    container.style.flex = '1';
-    container.style.display = 'flex';
+    showContainerAndNextButton();
+    fillArrayWithIDs();
+
+    if (input.value == '') {
+        searchNoPokemon();
+    } else if (allMatchingIDs.length == 1) {
+        foundOnePokemon()
+    } else if (allMatchingIDs.length == 0) {
+        foundNoPokemon();
+    } else {
+        foundSeveralPokemon()
+    }
+}
+
+
+function fillArrayWithIDs() {
+    let result = allPokemonNames.filter(checkNames);
 
     for (let i = 0; i < result.length; i++) {
         let name = result[i];
@@ -235,23 +259,33 @@ async function searchPokemon() {
         let index = allPokemonNames.indexOf(name);
         allMatchingIDs.push(index)
     }
+}
 
-    if (input.value == '') {
-        currentPokeID = 1;
-        init(1);
-        searchMode = false;
-    } else if (allMatchingIDs.length == 1) {
-        searchMode = true;
-        await loadNextPokecards(1);
-        showModal(allMatchingIDs[0] + 1)
-    } else if (allMatchingIDs.length == 0) {
-        container.innerHTML = 'Es wurde kein passendes Pokemon gefunden.';
-        container.style.color = "white";
-        container.style.fontSize = "32px";
-    } else {
-        searchMode = true;
-        await loadNextPokecards();
-    }
+
+function searchNoPokemon() {
+    currentPokeID = 1;
+    init(1);
+    searchMode = false;
+}
+
+
+async function foundOnePokemon() {
+    searchMode = true;
+    await loadNextPokecards(1);
+    showModal(allMatchingIDs[0] + 1)
+}
+
+
+function foundNoPokemon() {
+    container.innerHTML = 'Es wurde kein passendes Pokemon gefunden.';
+    container.style.color = "white";
+    container.style.fontSize = "32px";
+}
+
+
+async function foundSeveralPokemon() {
+    searchMode = true;
+    await loadNextPokecards();
 }
 
 
@@ -284,6 +318,27 @@ function hideSpinner() {
 }
 
 
-function toggleNextButton(shouldShow) {
+function hideContainerAndNextButton() {
+    let container = document.getElementById("container")
+
+    container.style.display = "none";
+    container.style.flex = "none";
+
+    toggleNextButton(false);
+}
+
+
+function showContainerAndNextButton() {
+    let container = document.getElementById("container")
+
+    container.style = '';
+    container.style.flex = '1';
+    container.style.display = 'flex';
+
+    toggleNextButton(true);
+}
+
+
+function toggleNextButton(shouldShow = showNextButton) {
     document.getElementById("nextButton").style.display = shouldShow ? "inline-block" : "none";
 }

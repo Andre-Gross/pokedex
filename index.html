@@ -19,18 +19,22 @@
 
 <body onload="includeHTML(); init()">
 
-    <header class="px-4 d-flex justify-content-between align-items-center flex-wrap">
+    <header class="px-4 d-flex align-items-center flex-wrap">
         <div class="d-flex align-items-center text-light">
             <a href="index.html" class="d-flex align-items-center">
                 <img class="mw-25vw" src="img/pokeball.png" alt="">
                 <h1>Pokedex</h1>
             </a>
         </div>
-        <form onsubmit="searchPokemon(); return false"><input id="searchInput" type="text"></form>
-        <div>
-        <img src="img/volume.png" alt="" id="volumeOnImg" class="volumeImg" onclick="changeVolume()">
-            <img src="img/mute.png" alt="" id="volumeOffImg" class="volumeImg" onclick="changeVolume()" style="display: none;">
+        <div class="d-flex">
+            <form onsubmit="searchPokemon(); return false"><input id="searchInput" type="text"></form>
+            <div>
+                <img src="img/volume.png" alt="" id="volumeOnImg" class="volumeImg" onclick="changeVolume()">
+                <img src="img/mute.png" alt="" id="volumeOffImg" class="volumeImg" onclick="changeVolume()"
+                    style="display: none;">
+            </div>
         </div>
+
     </header>
 
     <section id="container" class="justify-content-center"></section>
@@ -40,7 +44,8 @@
     </section>
 
     <section class="d-flex justify-content-center">
-        <button id="nextButton" class="mb-4 bc-button btn text-light" onclick="loadNextPokecards(12)">Next</button>
+        <button id="nextButton" class="mb-4 bc-button btn text-light" style="display: none;"
+            onclick="loadNextPokecards(12)">Next</button>
     </section>
 
     <section id="pokemonModal" class="pokemonModal" style="display:none;">

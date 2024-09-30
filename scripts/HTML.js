@@ -66,7 +66,7 @@ function modalNavHTML(id) {
     </ul>
     `
 
-    generateNavBorderBot();
+    generateNavBorder();
 }
 
 
@@ -141,8 +141,8 @@ function statsHTML(specificData) {
 
 
 function modalPreviousNextButtonHTML(id) {
-    container = document.getElementById("modalPrevoiusNextButton");
-    container.innerHTML = `
+    buttonContainer = document.getElementById("modalPrevoiusNextButton");
+    buttonContainer.innerHTML = `
     <button class="rounded-circle btn bc-text" onclick="changeModalCard(${id}, -1)">&#8656</button>
     <button class="rounded-circle btn bc-text" onclick="changeModalCard(${id}, 1)">&#8658</button>
     `;

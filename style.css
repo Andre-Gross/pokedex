@@ -44,6 +44,7 @@ body::-webkit-scrollbar-thumb {
 
 header {
     background-color: #FF6F61;
+    justify-content: space-between;
 }
 
 header a {
@@ -52,8 +53,19 @@ header a {
 }
 
 
+header form {
+    display: flex;
+}
+
+
+#searchInput {
+    margin-right: 4vh;
+}
+
+
 .volumeImg {
     max-height: 5vh !important;
+    max-width: 10vw !important;
     aspect-ratio: 1 / 1;
     cursor: pointer;
 }
@@ -210,8 +222,15 @@ footer a:hover {
 
 
 @media(max-width: 590px) {
-    h1 {
-        display: none;
+    header {
+        flex-direction: column;
+        padding: 5vh 0;
+        gap: 2vh;
+    }
+
+
+    header a img {
+        max-height: 10vh;
     }
 }
 
@@ -222,7 +241,11 @@ footer a:hover {
     }
 
     header a img {
-        display: none;
+        max-width: 15vw;
+    }
+
+    #searchInput {
+        width: 40vw;
     }
 }
 
@@ -232,12 +255,13 @@ footer a:hover {
     justify-content: center;
     align-items: center;
     flex: 1;
-    min-height: 40vh;
+    /* min-height: 40vh; */
 }
 
 #spinner {
-    width: 200px;
-    height: 200px;
+    max-width: 40vw;
+    max-height: 40vh;
+    aspect-ratio: 1/1;
     animation: spin 2s linear infinite;
 }
 
