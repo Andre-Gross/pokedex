@@ -2,7 +2,6 @@ let allPokemonNames = [];
 let allMatchingIDs = [];
 
 let currentPokeID = 1;
-let amountOfCards = 24;
 let highestPokeID = 1025;
 
 let volumeOn = true;
@@ -10,6 +9,7 @@ let searchMode = false;
 let showNextButton = true
 
 let arrayStart = 0;
+let amountOfCards = 24;
 
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
 const LIST_URL_1 = "?offset=";
@@ -25,80 +25,84 @@ async function init(start = currentPokeID) {
     currentPokeID = start;
     document.getElementById("container").innerHTML = '';
 
-    hideContainerAndNextButton();
+    hideContainer();
     await loadNextPokecards(amountOfCards);
-    showContainerAndNextButton()
 }
 
 
 async function loadNextPokecards(amount) {
     let container = document.getElementById("container");
+    container.classList.remove('containerText');
 
     toggleNextButton(false);
-    container.style.flex = '0'
     showSpinner();
-    await loadPokecards(amount)
-    moveInvisibleToContainer();
+    await tryLoadPokecards(amount)
     hideSpinner();
     toggleNextButton();
-    container.style.flex = '1'
+    showContainer()
+}
+
+
+async function tryLoadPokecards(amount) {
+    try {
+        await loadPokecards(amount)
+    } catch (error) {
+        container.innerHTML = "Leider konnten keine Daten geladen werden. Bitte versuchen sie es später erneut.";
+        container.classList.add('containerText');
+        showNextButton = false;
+    }
 }
 
 
 async function loadPokecards(amount = amountOfCards) {
     if (!searchMode) {
-        for (let id = currentPokeID; id < currentPokeID + amount; id++) {
-            await loadAndDisplayPokecard(id);
-            if (id >= highestPokeID) {
-                document.getElementById("nextButton").style.display = "none";
-                break;
-            }
-        }
-        currentPokeID = Math.min(currentPokeID + amount, highestPokeID);
-        toggleNextButton(currentPokeID < highestPokeID);
+        await loadPokecardsNoSearch(amount);
     } else {
-        for (let i = arrayStart; i < allMatchingIDs.length && i < arrayStart + amount; i++) {
-            let id = allMatchingIDs[i] + 1;
-            await loadAndDisplayPokecard(id);
-            if (i >= allMatchingIDs.length - 1) {
-                break;
-            }
-        }
-        arrayStart = arrayStart + amount;
-        if (arrayStart < allMatchingIDs.length) {
-            showNextButton = true;
-        } else {
-            showNextButton = false;
-        }
+        await loadPokecardsSearchMode(amount);
     }
 }
 
 
-async function loadAndDisplayPokecard(id) {
-    let invisible = document.getElementById('invisible');
+async function loadPokecardsNoSearch(amount) {
+    for (let id = currentPokeID; id < currentPokeID + amount; id++) {
+        await loadAndDisplaySinglePokecard(id);
+        if (id >= highestPokeID) {
+            break;
+        }
+    }
+    currentPokeID = Math.min(currentPokeID + amount, highestPokeID);
+    showNextButton = currentPokeID < highestPokeID;
+}
+
+
+async function loadPokecardsSearchMode(amount) {
+    for (let i = arrayStart; i < allMatchingIDs.length && i < arrayStart + amount; i++) {
+        let id = allMatchingIDs[i] + 1;
+        await loadAndDisplaySinglePokecard(id);
+        if (i >= allMatchingIDs.length - 1) {
+            break;
+        }
+    }
+    arrayStart = arrayStart + amount;
+    showNextButton = arrayStart < allMatchingIDs.length;
+}
+
+
+async function loadAndDisplaySinglePokecard(id) {
+    let container = document.getElementById('container');
 
     let overviewData = await loadOverviewData(id);
     let types = overviewData.types.map(t => t.type.name);
 
-    invisible.innerHTML += await overviewCardHTML(overviewData, id);
+    container.innerHTML += await overviewCardHTML(overviewData, id);
     addTypesHTML(types, `typesOf${id}`);
     addBackgroundColour(overviewData, `pokeCardNo${id}`);
-}
-
-
-function moveInvisibleToContainer() {
-    let container = document.getElementById("container");
-    let invisible = document.getElementById("invisible");
-
-    container.innerHTML += invisible.innerHTML;
-    invisible.innerHTML = '';
 }
 
 
 async function showModal(id) {
     let specificData = await loadSpecificData(id);
     let types = specificData.types.map(t => (t.type.name));
-    let cry = await new Audio(specificData.cries.latest);
 
     chosenContent = "generalTab";
 
@@ -106,15 +110,23 @@ async function showModal(id) {
     addTypesHTML(types, `typesOfSpecific`)
     addBackgroundColour(specificData, "modal-container");
 
-    document.getElementById("pokemonModal").style.display = "block";
+    document.getElementById("pokemonModal").classList.remove('d-none')
+    document.getElementById("pokemonModal").classList.add('d-block')
     document.body.style.overflow = "hidden";
 
     closeModalOnclick(specificData);
 
     if (volumeOn) {
-        cry.play();
+        pokeCry(id);
     }
 }
+
+async function pokeCry(id) {
+    let specificData = await loadSpecificData(id);
+    let cry = await new Audio(specificData.cries.latest);
+    cry.play();
+}
+
 
 
 function generateNavBorder() {
@@ -159,7 +171,17 @@ async function changeModalCard(ID, upOrDown) {
         newId = ID + upOrDown;
 
         if (newId > currentPokeID - 1) {
-            loadNextPokecards(amountOfCards);
+            if (newId < highestPokeID) {
+                loadNextPokecards(amountOfCards);
+            } else {
+                newId = 1;
+                init(newId);
+                showModal(1);
+            }
+        } else if (newId <= 0) {
+            currentPokeID = highestPokeID - amountOfCards + 1;
+            document.getElementById('container').innerHTML = '';
+            init();
         }
     }
     showModal(newId);
@@ -176,7 +198,8 @@ function closeModalOnclick(specificData) {
 
 
 function closeModal(specificData) {
-    document.getElementById("pokemonModal").style.display = "none";
+    document.getElementById("pokemonModal").classList.remove('d-block');
+    document.getElementById("pokemonModal").classList.add('d-none');
     removeBackgroundColour(specificData, "modal-container");
     document.body.style.overflow = "scroll";
 }
@@ -235,18 +258,38 @@ async function searchPokemon() {
 
     document.getElementById("container").innerHTML = '';
 
-    showContainerAndNextButton();
-    fillArrayWithIDs();
+    hideContainer();
 
-    if (input.value == '') {
-        searchNoPokemon();
-    } else if (allMatchingIDs.length == 1) {
-        foundOnePokemon()
-    } else if (allMatchingIDs.length == 0) {
-        foundNoPokemon();
+    if (!isNaN(input.value)) {
+        searchWithNumber(Number(input.value));
     } else {
-        foundSeveralPokemon()
+        fillArrayWithIDs();
+
+        if (input.value == '') {
+            searchNoPokemon();
+        } else if (allMatchingIDs.length == 1) {
+            foundOnePokemon()
+        } else if (allMatchingIDs.length == 0) {
+            foundNoPokemon();
+        } else {
+            foundSeveralPokemon()
+        }
     }
+}
+
+
+async function searchWithNumber(id) {
+    if (id <= 0) {
+        container.innerHTML = 'Es wurde kein passendes Pokemon gefunden. Die eingegebene ID ist zu klein';
+        container.classList.add('containerText');
+    } else if (id > highestPokeID) {
+        container.innerHTML = 'Es wurde kein passendes Pokemon gefunden. Die eingegebene ID ist zu gross';
+        container.classList.add('containerText');
+    } else {
+        init(id)
+        searchMode = false;
+    }
+    showContainer();
 }
 
 
@@ -262,9 +305,12 @@ function fillArrayWithIDs() {
 }
 
 
-function searchNoPokemon() {
+
+
+
+async function searchNoPokemon() {
     currentPokeID = 1;
-    init(1);
+    await init(1);
     searchMode = false;
 }
 
@@ -278,8 +324,7 @@ async function foundOnePokemon() {
 
 function foundNoPokemon() {
     container.innerHTML = 'Es wurde kein passendes Pokemon gefunden.';
-    container.style.color = "white";
-    container.style.fontSize = "32px";
+    container.classList.add('containerText');
 }
 
 
@@ -298,47 +343,49 @@ function checkNames(name) {
 function changeVolume() {
     if (volumeOn) {
         volumeOn = false;
-        document.getElementById('volumeOnImg').style.display = "none";
-        document.getElementById("volumeOffImg").style.display = "block";
+        document.getElementById('volumeOnImg').classList.remove('d-block');
+        document.getElementById('volumeOnImg').classList.add('d-none');
+        document.getElementById("volumeOffImg").classList.remove('d-none');
+        document.getElementById("volumeOffImg").classList.add('d-block');
     } else {
         volumeOn = true;
-        document.getElementById('volumeOnImg').style.display = "block";
-        document.getElementById("volumeOffImg").style.display = "none";
+        document.getElementById('volumeOffImg').classList.remove('d-block');
+        document.getElementById('volumeOffImg').classList.add('d-none');
+        document.getElementById("volumeOnImg").classList.remove('d-none');
+        document.getElementById("volumeOnImg").classList.add('d-block');
     }
 }
 
 
 function showSpinner() {
-    document.querySelector('.spinner-container').style.display = 'flex';
+    document.querySelector('.spinner-container').classList.remove('d-none');
+    document.querySelector('.spinner-container').classList.add('d-flex');
 }
 
 
 function hideSpinner() {
-    document.querySelector('.spinner-container').style.display = 'none';
+    document.querySelector('.spinner-container').classList.remove('d-flex');
+    document.querySelector('.spinner-container').classList.add('d-none');
 }
 
 
-function hideContainerAndNextButton() {
-    let container = document.getElementById("container")
-
-    container.style.display = "none";
-    container.style.flex = "none";
-
-    toggleNextButton(false);
+function hideContainer() {
+    document.getElementById("container").classList.add('hideContainer');
+    document.getElementById("container").classList.remove('showContainer');
 }
 
 
-function showContainerAndNextButton() {
-    let container = document.getElementById("container")
-
-    container.style = '';
-    container.style.flex = '1';
-    container.style.display = 'flex';
-
-    toggleNextButton(true);
+function showContainer() {
+    document.getElementById("container").classList.remove('hideContainer');
+    document.getElementById("container").classList.add('showContainer')
 }
 
 
 function toggleNextButton(shouldShow = showNextButton) {
-    document.getElementById("nextButton").style.display = shouldShow ? "inline-block" : "none";
+    let nextButton = document.getElementById("nextButton");
+    if (shouldShow == true) {
+        nextButton.classList.remove('d-none');
+    } else {
+        nextButton.classList.add('d-none');
+    }
 }
