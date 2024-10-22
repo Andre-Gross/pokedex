@@ -9,7 +9,7 @@ let searchMode = false;
 let showNextButton = true
 
 let arrayStart = 0;
-let amountOfCards = 24;
+let amountOfCards = 6;
 
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
 const LIST_URL_1 = "?offset=";
@@ -17,8 +17,6 @@ const LIST_URL_2 = "&limit=";
 const FORM_URL = "-form";
 
 let chosenContent = "generalTab";
-
-loadAllPokemonNames();
 
 
 async function init(start = currentPokeID) {
@@ -79,11 +77,12 @@ async function loadPokecardsSearchMode(amount) {
     for (let i = arrayStart; i < allMatchingIDs.length && i < arrayStart + amount; i++) {
         let id = allMatchingIDs[i] + 1;
         await loadAndDisplaySinglePokecard(id);
+        arrayStart++;
         if (i >= allMatchingIDs.length - 1) {
             break;
         }
     }
-    arrayStart = arrayStart + amount;
+    // arrayStart = arrayStart + amount;
     showNextButton = arrayStart < allMatchingIDs.length;
 }
 
@@ -111,15 +110,50 @@ async function showModal(id) {
     addBackgroundColour(specificData, "modal-container");
 
     document.getElementById("pokemonModal").classList.remove('d-none')
-    document.getElementById("pokemonModal").classList.add('d-block')
+    document.getElementById("pokemonModal").classList.add('d-flex')
     document.body.style.overflow = "hidden";
 
     closeModalOnclick(specificData);
+
+    checkPrevoiusAndNextButtonStatus(id)
 
     if (volumeOn) {
         pokeCry(id);
     }
 }
+
+
+function checkPrevoiusAndNextButtonStatus(id) {
+    if (searchMode) {
+        checkButtonStatusInSearchMode(id);
+    } else {
+        checkButtonStatusNoSearchMode(id);
+    }
+}
+
+
+function checkButtonStatusInSearchMode(id) {
+    let index = allMatchingIDs.indexOf(id - 1);
+    if (index + 1 >= arrayStart) {
+        let nextButton = document.getElementById("modal-next-button")
+        nextButton.disabled = true;
+    } else if (index + 1 <= 1) {
+        let prevoiusButton = document.getElementById("modal-prevoius-button")
+        prevoiusButton.disabled = true;
+    }
+}
+
+
+function checkButtonStatusNoSearchMode(id) {
+    if (id >= currentPokeID - 1) {
+        let nextButton = document.getElementById("modal-next-button")
+        nextButton.disabled = true;
+    } else if (id <= 1) {
+        let prevoiusButton = document.getElementById("modal-prevoius-button")
+        prevoiusButton.disabled = true;
+    }
+}
+
 
 async function pokeCry(id) {
     let specificData = await loadSpecificData(id);
@@ -161,28 +195,8 @@ async function changeModalCard(ID, upOrDown) {
     if (searchMode) {
         let index = allMatchingIDs.indexOf(ID - 1);
         newId = allMatchingIDs[index + upOrDown] + 1;
-        console.log(`${index}`);
-
-        if (index + 2 > arrayStart) {
-            loadNextPokecards(amountOfCards);
-        }
-
     } else {
         newId = ID + upOrDown;
-
-        if (newId > currentPokeID - 1) {
-            if (newId < highestPokeID) {
-                loadNextPokecards(amountOfCards);
-            } else {
-                newId = 1;
-                init(newId);
-                showModal(1);
-            }
-        } else if (newId <= 0) {
-            currentPokeID = highestPokeID - amountOfCards + 1;
-            document.getElementById('container').innerHTML = '';
-            init();
-        }
     }
     showModal(newId);
 }
@@ -198,7 +212,7 @@ function closeModalOnclick(specificData) {
 
 
 function closeModal(specificData) {
-    document.getElementById("pokemonModal").classList.remove('d-block');
+    document.getElementById("pokemonModal").classList.remove('d-flex');
     document.getElementById("pokemonModal").classList.add('d-none');
     removeBackgroundColour(specificData, "modal-container");
     document.body.style.overflow = "scroll";
@@ -260,21 +274,21 @@ async function searchPokemon() {
 
     hideContainer();
 
-    if (!isNaN(input.value)) {
-        searchWithNumber(Number(input.value));
-    } else {
-        fillArrayWithIDs();
+    // if (!isNaN(input.value)) {
+    //     searchWithNumber(Number(input.value));
+    // } else {
+    fillArrayWithIDs();
 
-        if (input.value == '') {
-            searchNoPokemon();
-        } else if (allMatchingIDs.length == 1) {
-            foundOnePokemon()
-        } else if (allMatchingIDs.length == 0) {
-            foundNoPokemon();
-        } else {
-            foundSeveralPokemon()
-        }
+    if (input.value == '') {
+        searchNoPokemon();
+    } else if (allMatchingIDs.length == 1) {
+        foundOnePokemon()
+    } else if (allMatchingIDs.length == 0) {
+        foundNoPokemon();
+    } else {
+        foundSeveralPokemon()
     }
+    // }
 }
 
 
@@ -303,9 +317,6 @@ function fillArrayWithIDs() {
         allMatchingIDs.push(index)
     }
 }
-
-
-
 
 
 async function searchNoPokemon() {

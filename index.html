@@ -17,7 +17,7 @@
     <script src="scripts/templates.js"></script>
 </head>
 
-<body onload="includeHTML(); init()">
+<body onload="includeHTML(); init(); loadAllPokemonNames();">
 
     <header class="px-4 d-flex align-items-center flex-wrap">
         <div class="d-flex align-items-center text-light">
@@ -26,26 +26,23 @@
                 <h1>Pokedex</h1>
             </a>
         </div>
-        <div class="d-flex">
-            <form onsubmit="searchPokemon(); return false"><input id="searchInput" type="text"></form>
+            <form onsubmit="searchPokemon(); return false"><input id="searchInput" type="text" minlength="3" placeholder="Name eingeben"></form>
             <div>
-                <img src="img/volume.png" alt="" id="volumeOnImg" class="volumeImg" onclick="changeVolume()">
+                <img src="img/volume.png" alt="" id="volumeOnImg" class="volumeImg aling-self-right" onclick="changeVolume()">
                 <img src="img/mute.png" alt="" id="volumeOffImg" class="volumeImg" onclick="changeVolume()"
                     style="display: none;">
             </div>
-        </div>
-
     </header>
 
     <section id="container" class="justify-content-center"></section>
 
-    <section class="spinner-container">
+    <section class="spinner-container d-none">
         <img id="spinner" class="mw-25vw" src="img/pokeball.png" alt="">
     </section>
 
     <section class="d-flex justify-content-center">
         <button id="nextButton" class="mb-4 bc-button btn text-light"
-            onclick="loadNextPokecards(12)">Next</button>
+            onclick="loadNextPokecards(12)">Next</button> 
     </section>
 
     <section id="pokemonModal" class="pokemonModal d-none">
