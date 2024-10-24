@@ -9,7 +9,7 @@ let searchMode = false;
 let showNextButton = true
 
 let arrayStart = 0;
-let amountOfCards = 6;
+let amountOfCards = 24;
 
 const BASE_URL = "https://pokeapi.co/api/v2/pokemon";
 const LIST_URL_1 = "?offset=";
@@ -82,7 +82,6 @@ async function loadPokecardsSearchMode(amount) {
             break;
         }
     }
-    // arrayStart = arrayStart + amount;
     showNextButton = arrayStart < allMatchingIDs.length;
 }
 
@@ -274,9 +273,6 @@ async function searchPokemon() {
 
     hideContainer();
 
-    // if (!isNaN(input.value)) {
-    //     searchWithNumber(Number(input.value));
-    // } else {
     fillArrayWithIDs();
 
     if (input.value == '') {
@@ -288,7 +284,6 @@ async function searchPokemon() {
     } else {
         foundSeveralPokemon()
     }
-    // }
 }
 
 

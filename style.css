@@ -5,6 +5,7 @@ body {
 
     display: flex;
     flex-direction: column;
+    align-items: center;
 
     --sb-track-color: #4a586e;
     --sb-thumb-color: #ff6f61;
@@ -43,6 +44,7 @@ body::-webkit-scrollbar-thumb {
 
 
 header {
+    width: 100%;
     background-color: #FF6F61;
     justify-content: space-between;
 }
